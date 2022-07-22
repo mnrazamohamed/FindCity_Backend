@@ -69,6 +69,16 @@ const userModel = mongoose.model("user", userSchema);
     password: "findCITY@123",
   });
   await raza.save();
+
+  const birun = new userModel({
+    fullName: "Birunthan",
+    email: "ubirunthan77@gmail.com",
+    nic: "200018902024",
+    mobile: 766807820,
+    role: "admin",
+    password: "findCITY@077",
+  });
+  await birun.save();
 })();
 
 
