@@ -8,7 +8,7 @@ const userSchema = mongoose.Schema(
       required: [true, "Please provide name"],
       minLength: 3,
       maxLength: 50,
-      trim: true
+      trim: true,
     },
     email: {
       type: String,
@@ -35,7 +35,7 @@ const userSchema = mongoose.Schema(
       type: String,
       enum: {
         values: ["admin", "manager", "hosteler"],
-        message: "invalid user role, expect manager or hosteler role",
+        message: "Invalid user role, Please select manager or hosteler",
       },
       required: [true, "Please provide role"],
     },
@@ -46,6 +46,8 @@ const userSchema = mongoose.Schema(
     address: {
       type: String,
       required: false,
+      minLength: 10,
+      maxLength: 100,
     },
     image: {
       type: String,
