@@ -1,18 +1,13 @@
 const router = require("express").Router();
 const auth = require("../middleware/auth");
 const { signup, login } = require("../controller/user/auth");
-const { findAllUsers, findOneUser, updateUser,
-    deleteUser } = require("../controller/user/user");
+const { findUsers, updateUser, deleteUser } = require("../controller/user/user");
 
 router
     .route("/")
-    .get(findAllUsers);
-
-router
-    .route("/:id")
-    .get(findOneUser)
+    .get(findUsers)
     .patch(updateUser)
-    .delete(deleteUser);
+    .delete(deleteUser)
     
 router
     .route("/signup")

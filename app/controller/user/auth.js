@@ -5,8 +5,9 @@ const { StatusCodes } = require("http-status-codes");
 
 //signup
 const signup = async (req, res) => {
+  const { fullName, email, nic, mobile, role, password } = req.body;
+  
   try {
-    const { fullName, email, nic, mobile, role, password } = req.body;
 
     const newUser = new User({
       fullName: fullName,
@@ -33,8 +34,9 @@ const signup = async (req, res) => {
 
 //login
 const login = async (req, res) => {
+  const { email, password } = req.body;
+  
   try {
-    const { email, password } = req.body;
     const user = await User.findOne({ email: email });
 
     if (!user)

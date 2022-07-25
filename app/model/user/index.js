@@ -5,33 +5,43 @@ const userSchema = mongoose.Schema(
   {
     fullName: {
       type: String,
-      required: true,
+      required: [true, "Please provide name"],
+      minLength: 3,
+      maxLength: 50,
+      trim: true
     },
     email: {
       type: String,
-      required: true,
-      unique: true
+      required: [true, "Please provide email"],
+      match: [
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        "Please provide a valid email",
+      ],
+      unique: true,
     },
     nic: {
       type: String,
-      required: true,
-      unique: true
+      required: [true, "Please provide nic"],
+      minLength: 10,
+      maxLength: 12,
+      unique: true,
     },
     mobile: {
       type: Number,
-      required: true,
+      required: [true, "Please provide mobile number"],
+      minLength: 8,
     },
     role: {
       type: String,
       enum: {
-        values : ['admin', 'manager','hosteler'],
-        message : "invalid user role, expect manager or hosteler role"
+        values: ["admin", "manager", "hosteler"],
+        message: "invalid user role, expect manager or hosteler role",
       },
-      required: true,
+      required: [true, "Please provide role"],
     },
     password: {
       type: String,
-      required: true,
+      required: [true, "Please provide password"],
     },
     address: {
       type: String,
@@ -80,8 +90,6 @@ const userModel = mongoose.model("user", userSchema);
     password: "findCITY@077",
   });
   await admin2.save();
-  
 })();
-
 
 module.exports = userModel;

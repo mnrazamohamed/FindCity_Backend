@@ -2,97 +2,109 @@ const UserModel = require("../../model/user");
 const { StatusCodes } = require("http-status-codes");
 
 //Find all users
-const findAllUsers = async (req, res) => {
+const findUsers = async (req, res) => {
   try {
-    const user = await UserModel.find();
+    const user = await UserModel.find(req.query);
     res.status(StatusCodes.OK).json({
       status: StatusCodes.OK,
+      count: user.length,
       user: user,
     });
   } catch (error) {
     res.status(StatusCodes.OK).json({
       status: StatusCodes.NOT_FOUND,
-      message: error.message,
+      error: error,
     });
   }
 };
 
-//Find one user by id
-const findOneUser = async (req, res) => {
-  try {
-    const user = await UserModel.findById(req.params.id);
-    res.status(StatusCodes.OK).json({
-      status: StatusCodes.OK,
-      user: user,
-    });
-  } catch (error) {
-    res.status(StatusCodes.OK).json({
-      status: StatusCodes.NOT_FOUND,
-      message: error.message,
-    });
-  }
-};
-
-//Update user by id
+//Update user
 const updateUser = async (req, res) => {
-  if (!req.body) {
-    res.status(StatusCodes.OK).json({
+  const { fullName, email, nic, mobile, password, _id } = req.body;
+
+  if (!_id) {
+    return res.status(StatusCodes.OK).json({
       status: StatusCodes.BAD_REQUEST,
-      message: "Can't be empty.",
+      error: " UserID required.",
     });
   }
 
-  const id = req.params.id;
+  try {
+    const user = await UserModel.findByIdAndUpdate(
+      { _id: _id },
+      {
+        fullName: fullName,
+        email: email,
+        nic: nic,
+        mobile: mobile,
+        password: password,
+      },
+      { useFindAndModify: false }
+    );
 
-  await UserModel.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
-    .then((data) => {
-      if (!data) {
-        res.status(StatusCodes.OK).json({
-          status: StatusCodes.NOT_FOUND,
-          message: "User not found.",
-        });
-      } else {
-        res.status(StatusCodes.OK).json({
-          status: StatusCodes.OK,
-          message: "User updated successfully.",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(StatusCodes.OK).json({
-        status: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: err.message,
+    if (!user) {
+      return res.status(StatusCodes.OK).json({
+        status: StatusCodes.NOT_FOUND,
+        error: "User not found.",
       });
+    } else {
+      return res.status(StatusCodes.OK).json({
+        status: StatusCodes.OK,
+        data: "User updated successfully.",
+      });
+    }
+  } catch (error) {
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      error: error,
     });
+  }
 };
 
 // Delete user by id
 const deleteUser = async (req, res) => {
-  await UserModel.findByIdAndRemove(req.params.id)
-    .then((data) => {
-      if (!data) {
-        res.status(StatusCodes.OK).json({
-          status: StatusCodes.NOT_FOUND,
-          message: "User not found.",
-        });
-      } else {
-        res.status(StatusCodes.OK).json({
-          status: StatusCodes.OK,
-          message: "User deleted successfully.",
-        });
-      }
-    })
-    .catch((err) => {
-      res.status(StatusCodes.OK).json({
-        status: StatusCodes.INTERNAL_SERVER_ERROR,
-        message: err.message,
-      });
+  const { fullName, email, nic, mobile, role, password, _id } = req.body;
+
+  if (!_id) {
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.BAD_REQUEST,
+      error: " UserID required.",
     });
+  }
+  try {
+    const user = await UserModel.findByIdAndRemove(
+      { _id: _id },
+      {
+        fullName: fullName,
+        email: email,
+        nic: nic,
+        mobile: mobile,
+        role: role,
+        password: password,
+      }
+    );
+
+    if (!user) {
+      return res.status(StatusCodes.OK).json({
+        status: StatusCodes.NOT_FOUND,
+        message: "User not found.",
+      });
+    } else {
+      return res.status(StatusCodes.OK).json({
+        status: StatusCodes.OK,
+        message: "User deleted successfully.",
+      });
+    }
+  } catch (error) {
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.INTERNAL_SERVER_ERROR,
+      error: error,
+    });
+  }
 };
 
 module.exports = {
-  findAllUsers,
-  findOneUser,
+  findUsers,
   updateUser,
   deleteUser,
 };
