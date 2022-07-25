@@ -1,19 +1,25 @@
-const router = require('express').Router()
-const auth = require('../middleware/auth')
-const { signup, login } = require('../controller/user/auth');
+const router = require("express").Router();
+const auth = require("../middleware/auth");
+const { signup, login } = require("../controller/user/auth");
+const { findAllUsers, findOneUser, updateUser,
+    deleteUser } = require("../controller/user/user");
 
 router
-    .route('/')
-    // auth ->  get users
-    // auth ->  delete user
-    // auth ->  patch user
+    .route("/")
+    .get(findAllUsers);
 
 router
-    .route('/signup')
-    .post(signup)
+    .route("/:id")
+    .get(findOneUser)
+    .patch(updateUser)
+    .delete(deleteUser);
+    
+router
+    .route("/signup")
+    .post(signup);
 
 router
-    .route('/login')
-    .post(login)
+    .route("/login")
+    .post(login);
 
 module.exports = router;

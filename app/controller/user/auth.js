@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const JWT = require("jsonwebtoken");
 const { StatusCodes } = require("http-status-codes");
 
+//signup
 const signup = async (req, res) => {
   try {
     const { fullName, email, nic, mobile, role, password } = req.body;
@@ -30,6 +31,7 @@ const signup = async (req, res) => {
   }
 };
 
+//login
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -58,7 +60,7 @@ const login = async (req, res) => {
     const token = JWT.sign(
       {
         userID: user._id,
-        role: user.role
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
