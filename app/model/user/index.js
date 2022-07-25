@@ -60,7 +60,8 @@ const userModel = mongoose.model("user", userSchema);
 (async () => {
   const data = await userModel.find({}).exec();
   if (data.length !== 0) return;
-  const raza = new userModel({
+
+  const admin1 = new userModel({
     fullName: "Raza Mohamed",
     email: "mnrazamohamed@gmail.com",
     nic: "199610800312",
@@ -68,9 +69,9 @@ const userModel = mongoose.model("user", userSchema);
     role: "admin",
     password: "findCITY@123",
   });
-  await raza.save();
+  await admin1.save();
 
-  const birun = new userModel({
+  const admin2 = new userModel({
     fullName: "Birunthan",
     email: "ubirunthan77@gmail.com",
     nic: "200018902024",
@@ -78,7 +79,8 @@ const userModel = mongoose.model("user", userSchema);
     role: "admin",
     password: "findCITY@077",
   });
-  await birun.save();
+  await admin2.save();
+  
 })();
 
 

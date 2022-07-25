@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 require("dotenv/config");
-require("./Model/dbConfig");
-const notFound = require("./Middleware/notfound");
+require("./config/dbConfig");
+require("./app/model/user");
+const notFound = require("./app/middleware/notfound");
 
 // Middleware
 app.use(
@@ -16,8 +17,7 @@ app.use(express.json());
 app.use(express.static("./assets"));
 
 //import routes
-const user = require("./Router/User");
-const userModel = require("./Model/User");
+const user = require("./app/router/user");
 
 //routes
 app.use("/api/v1/user", user); 
