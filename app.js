@@ -4,8 +4,8 @@ const cors = require("cors");
 require("dotenv/config");
 require("./config/dbConfig");
 require("./app/model/user/user");
-require("./app/model/post/post");
-require("./app/model/boarding/boarding");
+// require("./app/model/post/post");
+// require("./app/model/boarding/boarding");
 const notFound = require("./app/middleware/notfound");
 
 // Middleware
@@ -17,6 +17,8 @@ app.use(
 );
 app.use(express.json());
 app.use(express.static("./assets"));
+
+//cloudinary
 
 //import routes
 const user = require("./app/router/user");

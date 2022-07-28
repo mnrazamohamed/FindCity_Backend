@@ -50,6 +50,10 @@ const postSchema = mongoose.Schema(
         message: "Please select room type",
       },
     },
+    approval:{
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,

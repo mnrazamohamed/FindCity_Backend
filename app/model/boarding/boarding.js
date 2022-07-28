@@ -71,6 +71,10 @@ const boardingSchema = mongoose.Schema(
         },
       },
     ],
+    approval:{
+      type: Boolean,
+      default: false,
+    }
   },
   {
     timestamps: true,

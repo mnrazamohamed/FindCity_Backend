@@ -75,6 +75,7 @@ const updateBoarding = async (req, res) => {
     geoLocation,
     available,
     facilities,
+    approval,
     _id,
   } = req.body;
 
@@ -100,6 +101,7 @@ const updateBoarding = async (req, res) => {
         geoLocation: geoLocation,
         available: available,
         facilities: facilities,
+        approval:approval,
       },
       { new: true }
     );

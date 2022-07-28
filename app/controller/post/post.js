@@ -3,8 +3,7 @@ const { StatusCodes } = require("http-status-codes");
 
 //create post
 const createPost = async (req, res) => {
-  const { name, from, gender, priceRange, roomLocation, roomType } =
-    req.body;
+  const { name, from, gender, priceRange, roomLocation, roomType } = req.body;
 
   try {
     const newPost = await postModel.create({
@@ -47,8 +46,16 @@ const getPost = async (req, res) => {
 
 //Update post
 const updatePost = async (req, res) => {
-  const { name, from, gender, priceRange, roomLocation, roomType, _id } =
-    req.body;
+  const {
+    name,
+    from,
+    gender,
+    priceRange,
+    roomLocation,
+    roomType,
+    approval,
+    _id,
+  } = req.body;
 
   if (!_id) {
     return res.status(StatusCodes.OK).json({
@@ -67,6 +74,7 @@ const updatePost = async (req, res) => {
         priceRange: priceRange,
         roomLocation: roomLocation,
         roomType: roomType,
+        approval: approval,
       },
       { new: true }
     );
