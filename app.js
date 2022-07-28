@@ -18,7 +18,7 @@ app.use(
 app.use(express.json());
 app.use(express.static("./assets"));
 
-//cloudinary
+
 
 //import routes
 const user = require("./app/router/user");
