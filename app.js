@@ -1,10 +1,13 @@
+require('express-async-errors');
+require("dotenv/config");
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
-require("dotenv/config");
-require("./config/dbConfig");
-require("./app/model/user/user");
-const notFound = require("./app/middleware/notfound");
+require("./model/dbConfig");
+require("./model/user");
+const { errorHandler } = require('./middleware/errorHandler');
+const notFound = require("./middleware/notfound");
 
 // Middleware
 app.use(
@@ -17,15 +20,20 @@ app.use(express.json());
 app.use(express.static("./assets"));
 
 //import routes
-const user = require("./app/router/user");
-const post = require("./app/router/post");
-const boarding = require("./app/router/boarding");
+const user = require("./router/user");
+const post = require("./router/post");
+const boarding = require("./router/boarding");
+const payment = require("./router/payment");
 
 //routes
 app.use("/api/v1/user", user);
 app.use("/api/v1/post", post);
 app.use("/api/v1/boarding", boarding);
-app.use(notFound);
+app.use("/api/v1/payment", payment);
+
+app.use(notFound); // handle invalid routes
+app.use(errorHandler) // handle errors
+
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Node Server Running in ${port}`));
