@@ -37,7 +37,7 @@ const getPost = async (req, res) => {
 const updatePost = async (req, res) => {
   const { name, from, gender, priceRange, roomLocation, roomType, approval, postID, status } = req.body;
 
-  if (!postID) throw new APIError("postID required", StatusCodes.BAD_GATEWAY)
+  if (!postID) throw new APIError("postID required", StatusCodes.NOT_FOUND)
 
   await postModel.findByIdAndUpdate(
     { _id: postID },
@@ -62,7 +62,7 @@ const updatePost = async (req, res) => {
 // Delete post
 const deletePost = async (req, res) => {
   const { postID } = req.body;
-  if (!postID) throw new APIError("postID required", StatusCodes.BAD_GATEWAY)
+  if (!postID) throw new APIError("postID required", StatusCodes.NOT_FOUND)
   await postModel.findByIdAndRemove({ _id: postID });
 
   return res.status(StatusCodes.OK).json({
