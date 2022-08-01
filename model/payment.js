@@ -1,15 +1,22 @@
 const mongoose = require("mongoose");
 
 const paymentSchema = mongoose.Schema(
-    {
-        amount: {
-            type: Number,
-            required: [true, "Please provide amount in LKR"],
-        },
+  {
+    userID: {
+      type: String,
+      required: [true, "Please provide UserID"],
+      minLength: 3,
+      maxLength: 50,
+      trim: true,
     },
-    {
-        timestamps: true,
-    }
+    amount: {
+      type: Number,
+      required: [true, "Please provide amount in LKR"],
+    },
+  },
+  {
+    timestamps: true,
+  }
 );
 
 const paymentModel = mongoose.model("payment", paymentSchema);
