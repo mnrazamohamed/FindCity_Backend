@@ -1,4 +1,5 @@
 const postModel = require("../../model/post");
+const userModel = require("../../model/user");
 const { StatusCodes } = require("http-status-codes");
 const { APIError } = require("../../middleware/errorHandler");
 
@@ -6,6 +7,10 @@ const { APIError } = require("../../middleware/errorHandler");
 const createPost = async (req, res) => {
   const { name, from, gender, priceRange, roomLocation, roomType, userID } = req.body;
 
+  if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND)
+  const user = await userModel.findById({ _id: userID })
+  if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
+  
   const newPost = await postModel.create({
     name: name,
     from: from,
@@ -30,7 +35,7 @@ const getPost = async (req, res) => {
     post = await postModel.find(req.query).select(req.query.select).sort(req.query.sort) :
     req.params._id ?
       post = await postModel.findById({_id:req.params._id}).select(req.query.select).sort(req.query.sort) :
-      post = await postModel.find(req.params).select(req.query.select).sort(req.query.sort)
+      post = await postModel.find({userID:req.params.userID}).select(req.query.select).sort(req.query.sort)
 
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
@@ -47,6 +52,8 @@ const updatePost = async (req, res) => {
   const { _id } = req.params;
 
   if (!_id) throw new APIError("postID required", StatusCodes.NOT_FOUND)
+  const post = await postModel.findById({ _id: _id })
+  if (!post) throw new APIError("post not found", StatusCodes.NOT_FOUND)
 
   await postModel.findByIdAndUpdate(
     { _id: _id },
@@ -71,7 +78,11 @@ const updatePost = async (req, res) => {
 // Delete post
 const deletePost = async (req, res) => {
   const { _id } = req.params;
+
   if (!_id) throw new APIError("postID required", StatusCodes.NOT_FOUND)
+  const post = await postModel.findById({ _id: _id })
+  if (!post) throw new APIError("post not found", StatusCodes.NOT_FOUND)
+  
   await postModel.findByIdAndRemove({ _id: _id });
 
   return res.status(StatusCodes.OK).json({

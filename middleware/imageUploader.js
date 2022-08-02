@@ -1,6 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
 const userModel = require('../model/user');
-const boardingModel = require('../model/boarding');
 const { APIError } = require('./errorHandler');
 const fs = require('fs')
 const cloudinary = require('cloudinary').v2;
@@ -11,19 +10,20 @@ const imageUploader = async (req, res, next) => {
         next();
         return;
     }
-
-    const { _id } = req.params
+    
+    //userID or boardingID
+    const { _id } = req.params 
 
     const { userID } = req.body
     if (!_id && !userID) throw new APIError("userID required", StatusCodes.BAD_REQUEST)
-    const user = await userModel.findById({ _id: _id ?? userID })
+    const user = await userModel.findById({ _id: userID ?? _id })
     if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
     
     // deal with file
     const files = req.files
     if (!req.files) throw new APIError("image/s required", StatusCodes.BAD_REQUEST)
     if (!req.body.imageFolder) throw new APIError("imageFolder required. select user or boarding", StatusCodes.BAD_REQUEST)
-    if (!['user', 'boarding'].includes(req.body.imageFolder)) throw new APIError("select a folder. user or boarding", StatusCodes.BAD_REQUEST)
+    if (!['user', 'boarding'].includes(req.body.imageFolder)) throw new APIError("select a folder name. user or boarding", StatusCodes.BAD_REQUEST)
 
     cloudinary.config({ 
         cloud_name: 'razamohamed', 
@@ -42,19 +42,20 @@ const imageUploader = async (req, res, next) => {
                 .upload(file.tempFilePath, {
                     folder: "FIND CITY/" + req.body.imageFolder,
                     use_filename: true,
-                    filename_override: `${_id ?? userID} ${++i}.png`,
+                    filename_override: `${userID ?? _id} ${++i}.png`,
                     overwrite: true,
                     unique_filename: false,
                 })
             imageURL.push(image.url)
         }
-    } else { // single image
+    } else { 
+        // single image
         const image = await cloudinary
             .uploader
             .upload(files.image.tempFilePath, {
                 folder: "FIND CITY/" + req.body.imageFolder,
                 use_filename: true,
-                filename_override: `${_id ?? userID}.png`,
+                filename_override: `${userID ?? _id}.png`,
                 overwrite: true,
                 unique_filename: false,
             })

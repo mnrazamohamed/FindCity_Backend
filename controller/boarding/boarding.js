@@ -1,4 +1,5 @@
 const boardingModel = require("../../model/boarding");
+const userModel = require("../../model/user");
 const { StatusCodes } = require("http-status-codes");
 const { APIError } = require('../../middleware/errorHandler')
 
@@ -8,6 +9,10 @@ const createBoarding = async (req, res) => {
   //filtering incoming data
   const { boardingName, userID, gender, rooms, roomType, washroom, address, image, geoLocation, available, facilities, } = req.body;
 
+  if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND)
+  const user = await userModel.findById({ _id: userID })
+  if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
+  
   const newboarding = await boardingModel.create({
     boardingName: boardingName,
     userID: userID,
@@ -54,6 +59,9 @@ const updateBoarding = async (req, res) => {
   const { _id } = req.params;
 
   if (!_id) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
+  const boarding = await boardingModel.findById({ _id: _id })
+  if (!boarding) throw new APIError("boarding not found", StatusCodes.NOT_FOUND)
+
 
   await boardingModel.findByIdAndUpdate(
     { _id: _id },
@@ -82,8 +90,11 @@ const updateBoarding = async (req, res) => {
 // Delete boarding
 const deleteBoarding = async (req, res) => {
   const { _id } = req.params;
-  if (!_id) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
 
+  if (!_id) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
+  const boarding = await boardingModel.findById({ _id: _id })
+  if (!boarding) throw new APIError("boarding not found", StatusCodes.NOT_FOUND)
+  
   await boardingModel.findByIdAndRemove({ _id: _id });
 
   return res.status(StatusCodes.OK).json({

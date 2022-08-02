@@ -2,16 +2,6 @@ const { StatusCodes } = require("http-status-codes");
 const User = require("../model/user");
 const { APIError } = require("./errorHandler");
 
-/*
-A
-H
-M
-A M H
-A M
-A H
-H M
-*/
-
 const isAdmin = async (req, res, next) => {
     const { JWT_DATA: { userID, role }} = req
     const user = await User.findById({ _id: userID }).exec();

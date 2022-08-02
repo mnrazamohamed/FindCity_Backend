@@ -6,13 +6,13 @@ require('express-async-errors');
 require("dotenv/config");
 require("./model/dbConfig");
 require("./model/user");
-// require("./EventSchuduler/inactivatePost")
+require("./EventSchuduler/inactivatePost")
 
 // import middlewares
 const cors = require("cors");
 const { errorHandler } = require('./middleware/errorHandler');
 const notFound = require("./middleware/notfound");
-var fileupload = require("express-fileupload");
+const fileupload = require("express-fileupload");
 
 //import routes
 const user = require("./router/user");
@@ -30,7 +30,6 @@ app.use(
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("./assets"));
 app.use(fileupload({ useTempFiles: true }));
 
 //routes

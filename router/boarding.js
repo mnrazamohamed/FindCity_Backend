@@ -11,7 +11,7 @@ const { imageUploader } = require("../middleware/imageUploader");
 
 router
   .route("/")
-  .get(auth, isAdminOrHosteler, getBoarding)
+  .get(auth, isAdminOrManagerOrHosteler, getBoarding)
   .post(auth, isManager, imageUploader, createBoarding)
   
   router

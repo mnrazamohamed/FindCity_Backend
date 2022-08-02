@@ -12,7 +12,6 @@ const boardingSchema = mongoose.Schema(
     userID: {
       type: String,
       required: [true, "Please provide userID"],
-      trim: true,
       unique: true,
     },
     gender: {

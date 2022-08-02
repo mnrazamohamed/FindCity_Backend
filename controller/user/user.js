@@ -25,6 +25,9 @@ const updateUser = async (req, res) => {
   const { _id } = req.params;
 
   if (!_id) throw new APIError("userID required", StatusCodes.NOT_FOUND)
+  const user = await UserModel.findById({ _id: _id })
+  if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
+
   await UserModel.findByIdAndUpdate(
     { _id: _id },
     {
@@ -48,7 +51,10 @@ const updateUser = async (req, res) => {
 // Delete user
 const deleteUser = async (req, res) => {
   const { _id } = req.params;
+
   if (!_id) throw new APIError("userID required", StatusCodes.NOT_FOUND)
+  const user = await UserModel.findById({ _id: _id })
+  if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
 
   await UserModel.findByIdAndRemove({ _id: _id });
 
