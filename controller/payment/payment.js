@@ -6,13 +6,16 @@ const { Stripe } = require('./stripe')
 
 
 const getPayments = async (req, res) => {
-    //get payemnt
-    const payment = await paymentModel.find(req.query).sort("createdAt");
+
+    let payment = undefined
+    Object.entries(req.params).length === 0 ?
+        payment = await paymentModel.find(req.query).select(req.query.select).sort(req.query.sort) :
+        payment = await paymentModel.findById(req.params._id).select(req.query.select).sort(req.query.sort) 
 
     //send response
     res.status(StatusCodes.OK).json({
         status: StatusCodes.OK,
-        data : {
+        data: {
             count: payment.length,
             payment: payment,
         }
@@ -35,20 +38,40 @@ const makePayment = async (req, res) => {
     if (!paymentStripe) throw new APIError("Payment Error", StatusCodes.BAD_GATEWAY)
 
     //create payment
-    await paymentModel.create({
+    const payemnt = await paymentModel.create({
         amount: amount,
         userID: userID,
-    });
+    }, { new: true });
 
     //send response
     res.status(StatusCodes.OK).json({
         status: StatusCodes.OK,
-        data: "Payment success"
+        data: { message: "Payment success", payemnt }
     })
 
 }
 
+//Update post
+const updatePayment = async (req, res) => {
+    const { postID } = req.body;
+    const { _id } = req.params;
+
+    if (!_id) throw new APIError("paymentID required", StatusCodes.NOT_FOUND)
+    if (!postID) throw new APIError("postID required", StatusCodes.NOT_FOUND)
+
+    await paymentModel.findByIdAndUpdate(
+        { _id: _id },
+        { postID: postID },
+    );
+
+    return res.status(StatusCodes.OK).json({
+        status: StatusCodes.OK,
+        data: "payment attached to post successfully.",
+    });
+};
+
 module.exports = {
     getPayments,
-    makePayment
+    makePayment,
+    updatePayment
 }

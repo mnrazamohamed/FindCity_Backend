@@ -1,9 +1,10 @@
 const postModel = require("../../model/post");
 const { StatusCodes } = require("http-status-codes");
+const { APIError } = require("../../middleware/errorHandler");
 
 //create post
 const createPost = async (req, res) => {
-  const { name, from, gender, priceRange, roomLocation, roomType } = req.body;
+  const { name, from, gender, priceRange, roomLocation, roomType, userID } = req.body;
 
   const newPost = await postModel.create({
     name: name,
@@ -12,6 +13,7 @@ const createPost = async (req, res) => {
     priceRange: priceRange,
     roomLocation: roomLocation,
     roomType: roomType,
+    userID: userID
   });
 
   return res.status(StatusCodes.OK).json({
@@ -23,7 +25,13 @@ const createPost = async (req, res) => {
 
 //Get post
 const getPost = async (req, res) => {
-  const post = await postModel.find(req.query).sort("createdAt");
+  let post = undefined
+  Object.entries(req.params).length === 0 ?
+    post = await postModel.find(req.query).select(req.query.select).sort(req.query.sort) :
+    req.params._id ?
+      post = await postModel.findById({_id:req.params._id}).select(req.query.select).sort(req.query.sort) :
+      post = await postModel.find(req.params).select(req.query.select).sort(req.query.sort)
+
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
     data: {
@@ -35,12 +43,13 @@ const getPost = async (req, res) => {
 
 //Update post
 const updatePost = async (req, res) => {
-  const { name, from, gender, priceRange, roomLocation, roomType, approval, postID, status } = req.body;
+  const { name, from, gender, priceRange, roomLocation, roomType, approval, status } = req.body;
+  const { _id } = req.params;
 
-  if (!postID) throw new APIError("postID required", StatusCodes.NOT_FOUND)
+  if (!_id) throw new APIError("postID required", StatusCodes.NOT_FOUND)
 
   await postModel.findByIdAndUpdate(
-    { _id: postID },
+    { _id: _id },
     {
       name: name,
       from: from,
@@ -61,9 +70,9 @@ const updatePost = async (req, res) => {
 
 // Delete post
 const deletePost = async (req, res) => {
-  const { postID } = req.body;
-  if (!postID) throw new APIError("postID required", StatusCodes.NOT_FOUND)
-  await postModel.findByIdAndRemove({ _id: postID });
+  const { _id } = req.params;
+  if (!_id) throw new APIError("postID required", StatusCodes.NOT_FOUND)
+  await postModel.findByIdAndRemove({ _id: _id });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,

@@ -1,7 +1,10 @@
 const User = require("../../model/user");
 const bcrypt = require("bcryptjs");
 const JWT = require("jsonwebtoken");
+const { APIError } = require("../../middleware/errorHandler");
 const { StatusCodes } = require("http-status-codes");
+
+
 
 //signup
 const signup = async (req, res) => {
@@ -35,7 +38,7 @@ const login = async (req, res) => {
 
   if (!(user && isPasswordCorrect)) throw new APIError("Incorrect password", StatusCodes.UNAUTHORIZED)
 
-  const token = JWT.sign({ userID: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "10m" });
+  const token = JWT.sign({ userID: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,

@@ -9,18 +9,17 @@ const boardingSchema = mongoose.Schema(
       maxLength: 50,
       trim: true,
     },
-    ownerName: {
+    userID: {
       type: String,
-      required: [true, "Please provide owner name"],
-      minLength: 3,
-      maxLength: 50,
+      required: [true, "Please provide userID"],
       trim: true,
+      unique: true,
     },
     gender: {
       type: String,
       enum: {
         values: ["male", "female"],
-        message: "Invalid gender role, Please select male or female",
+        message: "Invalid gender, Please select male or female",
       },
       required: [true, "Please provide gender"],
     },
@@ -32,7 +31,7 @@ const boardingSchema = mongoose.Schema(
       type: String,
       required: [true, "Please provide room type"],
       enum: {
-        values: ["single", "share", "single/ share"],
+        values: ["single", "share", "single/share"],
         message: "select room type",
       },
     },
@@ -47,7 +46,7 @@ const boardingSchema = mongoose.Schema(
       maxLength: 100,
     },
     image: {
-      type: String,
+      type: Array,
       required: false,
     },
     geoLocation: {
@@ -57,14 +56,14 @@ const boardingSchema = mongoose.Schema(
     available: {
       type: String,
       enum: {
-        values: ["yes", "no"],
-        message: "Please select yes or no",
+        values: [true, false],
+        message: "Please select true or false",
       },
       required: true,
     },
     facilities: [
       {
-        type: String,
+        type: Array,
         enum: {
           values: ["bed", "mattress", "fan", "table", "chair"],
           message: "Please select facilities",
