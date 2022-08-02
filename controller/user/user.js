@@ -2,9 +2,16 @@ const UserModel = require("../../model/user");
 const { APIError } = require("../../middleware/errorHandler");
 const { StatusCodes } = require("http-status-codes");
 
+
+
 //Get users
 const getUsers = async (req, res) => {
-  const user = await UserModel.find(req.query).select('fullName email nic role mobile').sort('_id');
+  
+  let user = undefined
+  Object.entries(req.params).length === 0 ?
+    user = await UserModel.find(req.query).select('fullName email nic role mobile image').sort('_id') :
+    user = await UserModel.findById(req.params).select('fullName email nic role mobile image').sort('_id')
+
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
     count: user.length,
@@ -14,12 +21,12 @@ const getUsers = async (req, res) => {
 
 //Update user
 const updateUser = async (req, res) => {
-  const { fullName, email, nic, mobile, password, userID, address, image } = req.body;
+  const { fullName, email, nic, mobile, password, address, image } = req.body;
+  const { _id } = req.params;
 
-  if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND)
-
+  if (!_id) throw new APIError("userID required", StatusCodes.NOT_FOUND)
   await UserModel.findByIdAndUpdate(
-    { _id: userID },
+    { _id: _id },
     {
       fullName: fullName,
       email: email,
@@ -40,9 +47,9 @@ const updateUser = async (req, res) => {
 
 // Delete user
 const deleteUser = async (req, res) => {
-  const { userID } = req.body;
+  const { _id } = req.params;
+  if (!_id) throw new APIError("userID required", StatusCodes.NOT_FOUND)
 
-  if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND)
   await UserModel.findByIdAndRemove({ _id: _id });
 
   return res.status(StatusCodes.OK).json({

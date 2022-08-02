@@ -6,12 +6,11 @@ const { APIError } = require('../../middleware/errorHandler')
 //create boarding
 const createBoarding = async (req, res) => {
   //filtering incoming data
-  const { boardingName, ownerName, gender, rooms, roomType, washroom, address, image, geoLocation, available, facilities, } = req.body;
+  const { boardingName, userID, gender, rooms, roomType, washroom, address, image, geoLocation, available, facilities, } = req.body;
 
-  //create boarding
   const newboarding = await boardingModel.create({
     boardingName: boardingName,
-    ownerName: ownerName,
+    userID: userID,
     gender: gender,
     rooms: rooms,
     roomType: roomType,
@@ -33,7 +32,12 @@ const createBoarding = async (req, res) => {
 
 //Get boarding
 const getBoarding = async (req, res) => {
-  const boarding = await boardingModel.find(req.query).sort("createdAt");
+
+  let boarding = undefined
+  Object.entries(req.params).length === 0 ?
+    boarding = await boardingModel.find(req.query).select(req.query.select).sort(req.query.sort) :
+    boarding = await boardingModel.findById(req.params._id).select(req.query.select).sort(req.query.sort)
+
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
     data: {
@@ -45,15 +49,16 @@ const getBoarding = async (req, res) => {
 
 //Update boarding
 const updateBoarding = async (req, res) => {
-  const { boardingName, ownerName, gender, rooms, roomType, washroom, address, image, geoLocation, available, facilities, approval, boardingID, } = req.body;
+  const { boardingName, gender, rooms, roomType, washroom, address, image, geoLocation, available, facilities, approval, boardingID, } = req.body;
 
-  if (!boardingID) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
+  const { _id } = req.params;
+
+  if (!_id) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
 
   await boardingModel.findByIdAndUpdate(
-    { _id: boardingID },
+    { _id: _id },
     {
       boardingName: boardingName,
-      ownerName: ownerName,
       gender: gender,
       rooms: rooms,
       roomType: roomType,
@@ -76,11 +81,10 @@ const updateBoarding = async (req, res) => {
 
 // Delete boarding
 const deleteBoarding = async (req, res) => {
-  const { boardingID } = req.body;
+  const { _id } = req.params;
+  if (!_id) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
 
-  if (!boardingID) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
-
-  await boardingModel.findByIdAndRemove({ _id: boardingID });
+  await boardingModel.findByIdAndRemove({ _id: _id });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
