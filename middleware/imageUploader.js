@@ -10,31 +10,31 @@ const imageUploader = async (req, res, next) => {
         next();
         return;
     }
-    
+
     //userID or boardingID
-    const { _id } = req.params 
+    const { _id } = req.params
 
     const { userID } = req.body
     if (!_id && !userID) throw new APIError("userID required", StatusCodes.BAD_REQUEST)
     const user = await userModel.findById({ _id: userID ?? _id })
     if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
-    
+
     // deal with file
     const files = req.files
     if (!req.files) throw new APIError("image/s required", StatusCodes.BAD_REQUEST)
     if (!req.body.imageFolder) throw new APIError("imageFolder required. select user or boarding", StatusCodes.BAD_REQUEST)
     if (!['user', 'boarding'].includes(req.body.imageFolder)) throw new APIError("select a folder name. user or boarding", StatusCodes.BAD_REQUEST)
 
-    cloudinary.config({ 
-        cloud_name: 'razamohamed', 
-        api_key: '255548326596334', 
-        api_secret: 'QdIQyvXW0qfVox55Qf4p4tQeGT0' 
-      });
+    cloudinary.config({
+        cloud_name: 'razamohamed',
+        api_key: '255548326596334',
+        api_secret: 'QdIQyvXW0qfVox55Qf4p4tQeGT0'
+    });
 
     let imageURL = []
 
     //mulitple images
-    if (files.image instanceof Array) {
+    if (req.originalUrl.includes("boarding") && files.image instanceof Array) {
         let i = 0
         for (const file of files.image) {
             const image = await cloudinary
@@ -48,7 +48,9 @@ const imageUploader = async (req, res, next) => {
                 })
             imageURL.push(image.url)
         }
-    } else { 
+    }
+
+    if (req.originalUrl.includes("user")) {
         // single image
         const image = await cloudinary
             .uploader

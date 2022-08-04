@@ -1,11 +1,11 @@
 const router = require("express").Router();
 const auth = require("../middleware/auth");
 const { getPayments, makePayment, updatePayment } = require("../controller/payment/payment");
-const { isHosteler, isAdmin } = require("../middleware/userValidator");
+const { isHosteler, isAdminOrHosteler } = require("../middleware/userValidator");
 
 router
   .route("/")
-  .get(auth, isAdmin, getPayments)
+  .get(auth, isAdminOrHosteler, getPayments)
   .post(auth, isHosteler, makePayment);
 
 router

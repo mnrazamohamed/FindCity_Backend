@@ -6,7 +6,7 @@ const {
   updateBoarding,
   deleteBoarding,
 } = require("../controller/boarding/boarding");
-const { isAdminOrManager, isManager, isAdminOrManagerOrHosteler, isAdminOrHosteler } = require("../middleware/userValidator");
+const { isAdminOrManager, isManager, isAdminOrManagerOrHosteler } = require("../middleware/userValidator");
 const { imageUploader } = require("../middleware/imageUploader");
 
 router
@@ -16,7 +16,7 @@ router
   
   router
   .route("/:_id")
-  .get(auth, isManager, getBoarding)
+  .get(auth, isAdminOrManagerOrHosteler, getBoarding)
   .patch(auth, isManager, imageUploader, updateBoarding)
   .delete(auth, isAdminOrManager, deleteBoarding);
 

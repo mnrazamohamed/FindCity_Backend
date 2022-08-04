@@ -15,10 +15,12 @@ router
   .patch(auth, isAdminOrManagerOrHosteler, imageUploader, updateUser)
   .delete(auth, isAdminOrManagerOrHosteler, deleteUser);
 
+//forget password
+router.route("/fp/:email").get(getUsers)
+router.route("/fp/:_id").patch(updateUser)
+
 router.route("/signup").post(signup);
-
 router.route("/login").post(login);
-
 router.route("/refreshToken").post(refreshToken);
 
 module.exports = router;

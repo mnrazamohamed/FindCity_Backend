@@ -12,7 +12,7 @@ const createBoarding = async (req, res) => {
   if (!userID) throw new APIError("userID required", StatusCodes.NOT_FOUND)
   const user = await userModel.findById({ _id: userID })
   if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
-  
+
   const newboarding = await boardingModel.create({
     boardingName: boardingName,
     userID: userID,
@@ -25,7 +25,11 @@ const createBoarding = async (req, res) => {
     geoLocation: geoLocation,
     available: available,
     facilities: facilities,
-  });
+  }).catch(err => {
+    if (err.code === 11000)
+      throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
+    throw new APIError(err.message, err.code)
+  })
 
   //send response
   return res.status(StatusCodes.OK).json({
@@ -43,6 +47,13 @@ const getBoarding = async (req, res) => {
     boarding = await boardingModel.find(req.query).select(req.query.select).sort(req.query.sort) :
     boarding = await boardingModel.findById(req.params._id).select(req.query.select).sort(req.query.sort)
 
+  //send response
+  if (boarding.length === 0)
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.NOT_FOUND,
+      data: "No boarding found",
+    });
+
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
     data: {
@@ -50,6 +61,7 @@ const getBoarding = async (req, res) => {
       boarding: boarding,
     }
   });
+
 };
 
 //Update boarding
@@ -77,8 +89,11 @@ const updateBoarding = async (req, res) => {
       available: available,
       facilities: facilities,
       approval: approval,
-    },
-  );
+    }).catch(err => {
+      if (err.code === 11000)
+        throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
+      throw new APIError(err.message, err.code)
+    })
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
@@ -94,7 +109,7 @@ const deleteBoarding = async (req, res) => {
   if (!_id) throw new APIError("boardingID required", StatusCodes.NOT_FOUND)
   const boarding = await boardingModel.findById({ _id: _id })
   if (!boarding) throw new APIError("boarding not found", StatusCodes.NOT_FOUND)
-  
+
   await boardingModel.findByIdAndRemove({ _id: _id });
 
   return res.status(StatusCodes.OK).json({

@@ -13,6 +13,12 @@ const getPayments = async (req, res) => {
         payment = await paymentModel.findById(req.params._id).select(req.query.select).sort(req.query.sort) 
 
     //send response
+    if (payment.length === 0)
+        return res.status(StatusCodes.OK).json({
+            status: StatusCodes.NOT_FOUND,
+            data: "No payment found",
+        });
+
     res.status(StatusCodes.OK).json({
         status: StatusCodes.OK,
         data: {

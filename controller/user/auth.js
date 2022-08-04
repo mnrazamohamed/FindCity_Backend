@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 const JWT = require("jsonwebtoken");
 const { APIError } = require("../../middleware/errorHandler");
 const { StatusCodes } = require("http-status-codes");
+const { MongooseError } = require("mongoose");
 
 
 
@@ -17,7 +18,12 @@ const signup = async (req, res) => {
     mobile: mobile,
     role: role,
     password: password,
+  }).catch(err => {
+    if (err.code === 11000)
+      throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
+    throw new APIError(err.message, err.code)
   })
+
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
@@ -59,15 +65,17 @@ const refreshToken = async (req, res) => {
     }
 
     // check correct token
-    const { userID, role }  = JWT.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
+    const { userID, role } = JWT.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
 
     // generate new token
-    const newToken = JWT.sign({userID, role}, process.env.JWT_SECRET, { expiresIn: "10m" });
+    const newToken = JWT.sign({ userID, role }, process.env.JWT_SECRET, { expiresIn: "10m" });
 
     //send logged in user details
-    res.status(StatusCodes.OK).json({ status: StatusCodes.OK, data: {
-      userID, role, newToken
-    } })
+    res.status(StatusCodes.OK).json({
+      status: StatusCodes.OK, data: {
+        userID, role, newToken
+      }
+    })
 
   } catch (error) {
     res.status(StatusCodes.UNAUTHORIZED).json({ data: error.message })

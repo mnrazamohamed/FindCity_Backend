@@ -6,22 +6,30 @@ const { StatusCodes } = require("http-status-codes");
 
 //Get users
 const getUsers = async (req, res) => {
-  
+
   let user = undefined
   Object.entries(req.params).length === 0 ?
-    user = await UserModel.find(req.query).select('fullName email nic role mobile image').sort('_id') :
-    user = await UserModel.findById(req.params).select('fullName email nic role mobile image').sort('_id')
+    user = await UserModel.find(req.query).sort('_id') :
+    user = await UserModel.findOne(req.params).sort('_id')
+
+  if (user.length === 0)
+    return res.status(StatusCodes.OK).json({
+      status: StatusCodes.NOT_FOUND,
+      data: "No user found",
+    });
 
   res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
-    count: user.length,
-    user: user,
+    data: {
+      count: user.length,
+      user: user,
+    }
   });
 };
 
 //Update user
 const updateUser = async (req, res) => {
-  const { fullName, email, nic, mobile, password, address, image } = req.body;
+  const { fullName, nic, mobile, password, address, image } = req.body;
   const { _id } = req.params;
 
   if (!_id) throw new APIError("userID required", StatusCodes.NOT_FOUND)
@@ -32,14 +40,16 @@ const updateUser = async (req, res) => {
     { _id: _id },
     {
       fullName: fullName,
-      email: email,
       nic: nic,
       mobile: mobile,
       password: password,
       address: address,
       image: image
-    },
-  );
+    }).catch(err => {
+      if (err.code === 11000)
+        throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
+      throw new APIError(err.message, err.code)
+    })
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,

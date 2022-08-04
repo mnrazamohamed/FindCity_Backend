@@ -60,6 +60,7 @@ const userSchema = mongoose.Schema(
   }
 );
 
+
 userSchema.pre("save", function (next) {
   if (!this.isModified("password")) return next();
   const salt = bcrypt.genSaltSync(10);
@@ -67,6 +68,16 @@ userSchema.pre("save", function (next) {
   this.password = hashedPassword;
   return next();
 });
+
+
+// userSchema.pre('findOneAndUpdate', async function () {
+//   const userToUpdate = await this.model.findOne(this.getQuery())
+//   if (userToUpdate.password !== this._update.password) {
+//     const salt = bcrypt.genSaltSync(10);
+//     const hashedPassword = bcrypt.hashSync(this._update.password, salt);
+//     this._update.password = hashedPassword;
+//   }
+// })
 
 const userModel = mongoose.model("user", userSchema);
 

@@ -13,7 +13,7 @@ router
   .get(auth, isHosteler, getPost)
 
 router
-  .route("/:_id")
+  .route("/:userID/:_id")
   .get(auth, isHosteler, getPost)
   .patch(auth, isHosteler, updatePost)
   .delete(auth, isAdminOrHosteler, deletePost);
