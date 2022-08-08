@@ -6,8 +6,9 @@ mongoose.connect(mongoURL, {useUnifiedTopology : true, useNewUrlParser : true})
 
 var connection = mongoose.connection;
 
-connection.on('error', () => {
+connection.on('error', (err) => {
     console.log("MongoDB Connection Failed");
+    console.log(err);
     process.exit(0)
 })
 

@@ -8,14 +8,14 @@ const { APIError } = require("../../middleware/errorHandler");
 // Code - any 3 digit number
 
 const Stripe = async (req, res) => {
-  const { stripeToken, amount } = req.body;
+  const { stripeToken, amount, email } = req.body;
 
   if (!stripeToken)
     throw new APIError("Token is required", StatusCodes.BAD_REQUEST);
 
   try {
     const customer = await stripe.customers.create({
-      email: stripeToken.email,
+      email: email,
       payment_method: "pm_card_visa",
       invoice_settings: { default_payment_method: "pm_card_visa" },
     });

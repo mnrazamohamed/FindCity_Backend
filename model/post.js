@@ -55,7 +55,7 @@ const postSchema = mongoose.Schema({
     type: String,
     required: [true, "Please provide room type"],
     enum: {
-      values: ["single", "share", "single/ share"],
+      values: ["single", "share", "single/share"],
       message: "Please select room type",
     },
   },

@@ -20,7 +20,7 @@ const signup = async (req, res) => {
     password: password,
   }).catch(err => {
     if (err.code === 11000)
-      throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)
+      throw new APIError(`Duplication error:  ${Object.entries(err.keyValue)[0][0]} - ${Object.entries(err.keyValue)[0][1]}`, err.code)
     throw new APIError(err.message, err.code)
   })
 
@@ -44,7 +44,7 @@ const login = async (req, res) => {
 
   if (!(user && isPasswordCorrect)) throw new APIError("Incorrect password", StatusCodes.UNAUTHORIZED)
 
-  const token = JWT.sign({ userID: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
+  const token = JWT.sign({ userID: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1m" });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
@@ -68,7 +68,7 @@ const refreshToken = async (req, res) => {
     const { userID, role } = JWT.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
 
     // generate new token
-    const newToken = JWT.sign({ userID, role }, process.env.JWT_SECRET, { expiresIn: "10m" });
+    const newToken = JWT.sign({ userID, role }, process.env.JWT_SECRET, { expiresIn: "1m" });
 
     //send logged in user details
     res.status(StatusCodes.OK).json({

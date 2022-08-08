@@ -10,7 +10,7 @@ const getPayments = async (req, res) => {
     let payment = undefined
     Object.entries(req.params).length === 0 ?
         payment = await paymentModel.find(req.query).select(req.query.select).sort(req.query.sort) :
-        payment = await paymentModel.findById(req.params._id).select(req.query.select).sort(req.query.sort) 
+        payment = await paymentModel.findById(req.params._id).select(req.query.select).sort(req.query.sort)
 
     //send response
     if (payment.length === 0)
@@ -42,17 +42,18 @@ const makePayment = async (req, res) => {
     //payment
     const paymentStripe = await Stripe(req)
     if (!paymentStripe) throw new APIError("Payment Error", StatusCodes.BAD_GATEWAY)
+    console.log(amount, userID);
 
     //create payment
-    const payemnt = await paymentModel.create({
+    await paymentModel.create({
         amount: amount,
         userID: userID,
-    }, { new: true });
+    });
 
     //send response
     res.status(StatusCodes.OK).json({
         status: StatusCodes.OK,
-        data: { message: "Payment success", payemnt }
+        data: { message: "Payment success" }
     })
 
 }
