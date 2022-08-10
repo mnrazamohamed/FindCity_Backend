@@ -67,6 +67,11 @@ const postSchema = mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  request: {
+    type: Array,
+    default: [],
+  },
+
 
 },
   {

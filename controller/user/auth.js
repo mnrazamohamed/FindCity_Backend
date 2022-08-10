@@ -44,7 +44,7 @@ const login = async (req, res) => {
 
   if (!(user && isPasswordCorrect)) throw new APIError("Incorrect password", StatusCodes.UNAUTHORIZED)
 
-  const token = JWT.sign({ userID: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1m" });
+  const token = JWT.sign({ userID: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1d" });
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,
@@ -68,7 +68,7 @@ const refreshToken = async (req, res) => {
     const { userID, role } = JWT.verify(token, process.env.JWT_SECRET, { ignoreExpiration: true });
 
     // generate new token
-    const newToken = JWT.sign({ userID, role }, process.env.JWT_SECRET, { expiresIn: "1m" });
+    const newToken = JWT.sign({ userID, role }, process.env.JWT_SECRET, { expiresIn: "10m" });
 
     //send logged in user details
     res.status(StatusCodes.OK).json({

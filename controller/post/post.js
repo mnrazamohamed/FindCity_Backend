@@ -36,11 +36,11 @@ const createPost = async (req, res) => {
 const getPost = async (req, res) => {
   let post = undefined
   Object.entries(req.params).length === 0 ?
-    post = await postModel.find(req.query).select(req.query.select).sort(req.query.sort) :
+    post = await postModel.find(req.query).select(req.query.select).sort({ "createdAt": -1 }) :
     req.params._id ?
-      post = await postModel.findById({ _id: req.params._id }).select(req.query.select).sort(req.query.sort) :
-      post = await postModel.find({ userID: req.params.userID }).select(req.query.select).sort(req.query.sort)
-      
+      post = await postModel.findById({ _id: req.params._id }).select(req.query.select).sort({ "createdAt": -1 }) :
+      post = await postModel.find({ userID: req.params.userID }).select(req.query.select).sort({ "createdAt": -1 })
+
   if (post.length === 0)
     return res.status(StatusCodes.OK).json({
       status: StatusCodes.NOT_FOUND,
@@ -60,12 +60,15 @@ const getPost = async (req, res) => {
 
 //Update post
 const updatePost = async (req, res) => {
-  const { name, from, gender, priceRange, roomLocation, roomType, approval, status } = req.body;
+  const { name, from, gender, priceRange, roomLocation, roomType, approval, status, request } = req.body;
   const { _id } = req.params;
 
   if (!_id) throw new APIError("postID required", StatusCodes.NOT_FOUND)
   const post = await postModel.findById({ _id: _id })
   if (!post) throw new APIError("post not found", StatusCodes.NOT_FOUND)
+
+  if (request && !(request instanceof Array))
+    throw new APIError("request need to be array", StatusCodes.NOT_FOUND)
 
   await postModel.findByIdAndUpdate(
     { _id: _id },
@@ -78,6 +81,7 @@ const updatePost = async (req, res) => {
       roomType: roomType,
       approval: approval,
       status: status,
+      request: request
     }).catch(err => {
       if (err.code === 11000)
         throw new APIError(`Duplication error:  ${JSON.stringify(err.keyValue)}`, err.code)

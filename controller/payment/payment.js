@@ -42,10 +42,9 @@ const makePayment = async (req, res) => {
     //payment
     const paymentStripe = await Stripe(req)
     if (!paymentStripe) throw new APIError("Payment Error", StatusCodes.BAD_GATEWAY)
-    console.log(amount, userID);
 
     //create payment
-    await paymentModel.create({
+    const newPaymentInfo = await paymentModel.create({
         amount: amount,
         userID: userID,
     });
@@ -53,7 +52,7 @@ const makePayment = async (req, res) => {
     //send response
     res.status(StatusCodes.OK).json({
         status: StatusCodes.OK,
-        data: { message: "Payment success" }
+        data: newPaymentInfo
     })
 
 }

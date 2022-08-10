@@ -70,8 +70,7 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.pre('findOneAndUpdate', async function () {
-  const userToUpdate = await this.model.findOne(this.getQuery())
-  if (userToUpdate.password !== this._update.password) {
+  if (this._update.password) {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(this._update.password, salt);
     this._update.password = hashedPassword;
