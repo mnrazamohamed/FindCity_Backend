@@ -6,18 +6,21 @@ const {
   updateBoarding,
   deleteBoarding,
 } = require("../controller/boarding/boarding");
-const { isAdminOrManager, isManager, isAdminOrManagerOrHosteler } = require("../middleware/userValidator");
+const { isAdminOrManager, isManager, isAdminOrManagerOrHosteler, isAdminOrHosteler } = require("../middleware/userValidator");
 const { imageUploader } = require("../middleware/imageUploader");
 
 router
   .route("/")
-  .get(auth, isAdminOrManagerOrHosteler, getBoarding)
+  .get(auth, isAdminOrHosteler, getBoarding)
   .post(auth, isManager, imageUploader, createBoarding)
-  
-  router
-  .route("/:_id")
-  .get(auth, isAdminOrManagerOrHosteler, getBoarding)
+
+router
+  .route("/:userID/:_id")
   .patch(auth, isManager, imageUploader, updateBoarding)
   .delete(auth, isAdminOrManager, deleteBoarding);
+
+router
+  .route("/:userID")
+  .get(auth, isAdminOrManagerOrHosteler, getBoarding)
 
 module.exports = router;

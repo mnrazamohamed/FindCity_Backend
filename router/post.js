@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const auth = require("../middleware/auth");
 const { createPost, getPost, updatePost, deletePost, } = require("../controller/post/post");
-const { isAdminOrHosteler, isHosteler, isAdminOrManagerOrHosteler } = require("../middleware/userValidator");
+const { isAdminOrHosteler, isHosteler, isAdminOrManagerOrHosteler, isManagerOrHosteler } = require("../middleware/userValidator");
 
 router
   .route("/")
@@ -15,7 +15,7 @@ router
 router
   .route("/:userID/:_id")
   .get(auth, isHosteler, getPost)
-  .patch(auth, isAdminOrHosteler, updatePost) // only hosteler and manager <--- need to change  
+  .patch(auth, isManagerOrHosteler, updatePost)
   .delete(auth, isAdminOrHosteler, deletePost);
 
 module.exports = router;

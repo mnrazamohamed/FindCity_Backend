@@ -45,7 +45,7 @@ const getBoarding = async (req, res) => {
   let boarding = undefined
   Object.entries(req.params).length === 0 ?
     boarding = await boardingModel.find(req.query).select(req.query.select).sort(req.query.sort) :
-    boarding = await boardingModel.findById(req.params._id).select(req.query.select).sort(req.query.sort)
+    boarding = await boardingModel.findOne(req.params).select(req.query.select).sort(req.query.sort)
 
   //send response
   if (boarding.length === 0)
