@@ -49,7 +49,7 @@ const boardingSchema = mongoose.Schema(
       required: false,
     },
     geoLocation: {
-      type: String,
+      type: Array,
       required: false,
     },
     available: {
