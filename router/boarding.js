@@ -15,7 +15,7 @@ router
   .post(auth, isManager, imageUploader, createBoarding)
 
 router
-  .route("/:userID/:_id")
+  .route("/:_id")
   .patch(auth, isManager, imageUploader, updateBoarding)
   .delete(auth, isAdminOrManager, deleteBoarding);
 
