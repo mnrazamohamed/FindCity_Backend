@@ -12,7 +12,6 @@ const boardingSchema = mongoose.Schema(
     userID: {
       type: String,
       required: [true, "Please provide userID"],
-      unique: true,
     },
     gender: {
       type: String,
@@ -53,23 +52,21 @@ const boardingSchema = mongoose.Schema(
       required: false,
     },
     available: {
-      type: String,
-      enum: {
-        values: [true, false],
-        message: "Please select true or false",
-      },
+      type: Boolean,
       required: true,
     },
-    facilities: [
-      {
-        type: Array,
-        enum: {
-          values: ["bed", "mattress", "fan", "table", "chair"],
-          message: "Please select facilities",
-        },
+    facilities: [{
+      type: Array,
+      enum: {
+        values: ["bed", "mattress", "fan", "table", "chair"],
+        message: "Please select facilities",
       },
-    ],
-    approval:{
+    }],
+    approval: {
+      type: Boolean,
+      default: false,
+    },
+    deleted: {
       type: Boolean,
       default: false,
     }

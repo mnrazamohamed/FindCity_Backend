@@ -10,7 +10,10 @@ router
 
 router
   .route("/:_id")
-  .get(auth, isHosteler, getPayments)
   .patch(auth, isHosteler, updatePayment);
+
+router
+  .route("/:postID")
+  .get(auth, isHosteler, getPayments)
 
 module.exports = router;

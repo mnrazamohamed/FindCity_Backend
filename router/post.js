@@ -15,7 +15,7 @@ router
 router
   .route("/:userID/:_id")
   .get(auth, isHosteler, getPost)
-  .patch(auth, isManagerOrHosteler, updatePost)
+  .patch(auth, isAdminOrManagerOrHosteler, updatePost)
   .delete(auth, isAdminOrHosteler, deletePost);
 
 module.exports = router;

@@ -71,7 +71,10 @@ const postSchema = mongoose.Schema({
     type: Array,
     default: [],
   },
-
+  deleted: {
+    type: Boolean,
+    default: false,
+  }
 
 },
   {

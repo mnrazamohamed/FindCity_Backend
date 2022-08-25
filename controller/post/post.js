@@ -36,10 +36,10 @@ const createPost = async (req, res) => {
 const getPost = async (req, res) => {
   let post = undefined
   Object.entries(req.params).length === 0 ?
-    post = await postModel.find(req.query).select(req.query.select).sort({ "createdAt": -1 }) :
+    post = await postModel.find({ ...req.query, deleted: false }).select(req.query.select).sort({ "createdAt": -1 }) :
     req.params._id ?
-      post = await postModel.findById({ _id: req.params._id }).select(req.query.select).sort({ "createdAt": -1 }) :
-      post = await postModel.find({ userID: req.params.userID }).select(req.query.select).sort({ "createdAt": -1 })
+      post = await postModel.findOne({ ...req.query, _id: req.params._id, deleted: false }).select(req.query.select).sort({ "createdAt": -1 }) :
+      post = await postModel.find({ ...req.query, userID: req.params.userID, deleted: false }).select(req.query.select).sort({ "createdAt": -1 })
 
   if (post.length === 0)
     return res.status(StatusCodes.OK).json({
@@ -94,7 +94,7 @@ const updatePost = async (req, res) => {
   });
 };
 
-// Delete post
+// lazy delete post // actually we are not removing from database
 const deletePost = async (req, res) => {
   const { _id } = req.params;
 
@@ -102,7 +102,9 @@ const deletePost = async (req, res) => {
   const post = await postModel.findById({ _id: _id })
   if (!post) throw new APIError("post not found", StatusCodes.NOT_FOUND)
 
-  await postModel.findByIdAndRemove({ _id: _id });
+  await postModel.findByIdAndUpdate(
+    { _id: _id },
+    { deleted: true })
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,

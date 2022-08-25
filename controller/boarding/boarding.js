@@ -44,11 +44,13 @@ const getBoarding = async (req, res) => {
 
   let boarding = undefined
   Object.entries(req.params).length === 0 ?
-    boarding = await boardingModel.find(req.query).select(req.query.select).sort(req.query.sort) :
-    boarding = await boardingModel.findOne(req.params).select(req.query.select).sort(req.query.sort)
+    boarding = await boardingModel.find({ ...req.query, deleted: false }).select(req.query.select).sort(req.query.sort) :
+    req.params.userID ?
+      boarding = await boardingModel.findOne({ ...req.params, deleted: false }).select(req.query.select).sort(req.query.sort) :
+      boarding = await boardingModel.findOne({ ...req.params, deleted: false }).select(req.query.select).sort(req.query.sort)
 
   //send response
-  if (boarding.length === 0)
+  if (!boarding || boarding?.length === 0)
     return res.status(StatusCodes.OK).json({
       status: StatusCodes.NOT_FOUND,
       data: "No boarding found",
@@ -102,7 +104,7 @@ const updateBoarding = async (req, res) => {
 
 };
 
-// Delete boarding
+// lazy delete boarding // actually we are not removing from database
 const deleteBoarding = async (req, res) => {
   const { _id } = req.params;
 
@@ -110,7 +112,9 @@ const deleteBoarding = async (req, res) => {
   const boarding = await boardingModel.findById({ _id: _id })
   if (!boarding) throw new APIError("boarding not found", StatusCodes.NOT_FOUND)
 
-  await boardingModel.findByIdAndRemove({ _id: _id });
+  await boardingModel.findByIdAndUpdate(
+    { _id: _id },
+    { deleted: true })
 
   return res.status(StatusCodes.OK).json({
     status: StatusCodes.OK,

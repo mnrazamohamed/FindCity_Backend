@@ -19,6 +19,7 @@ const user = require("./router/user");
 const post = require("./router/post");
 const boarding = require("./router/boarding");
 const payment = require("./router/payment");
+const city = require("./router/city");
 
 
 // Middleware
@@ -37,6 +38,7 @@ app.use("/api/v1/user", user);
 app.use("/api/v1/post", post);
 app.use("/api/v1/boarding", boarding);
 app.use("/api/v1/payment", payment);
+app.use("/api/v1/city", city);
 
 app.use(notFound); // handle invalid routes
 app.use(errorHandler) // handle errors

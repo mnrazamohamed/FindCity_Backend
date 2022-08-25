@@ -16,11 +16,12 @@ router
 
 router
   .route("/:_id")
-  .patch(auth, isManager, imageUploader, updateBoarding)
-  .delete(auth, isAdminOrManager, deleteBoarding);
+  .patch(auth, isAdminOrManager, imageUploader, updateBoarding)
+  .delete(auth, isAdminOrManager, deleteBoarding)
+  .get(auth, isAdminOrManagerOrHosteler, getBoarding)
 
 router
-  .route("/:userID")
+  .route("/uid/:userID")
   .get(auth, isAdminOrManagerOrHosteler, getBoarding)
 
 module.exports = router;

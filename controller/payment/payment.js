@@ -10,9 +10,8 @@ const getPayments = async (req, res) => {
     let payment = undefined
     Object.entries(req.params).length === 0 ?
         payment = await paymentModel.find(req.query).select(req.query.select).sort(req.query.sort) :
-        payment = await paymentModel.findById(req.params._id).select(req.query.select).sort(req.query.sort)
+        payment = await paymentModel.findOne(req.params._id).select(req.query.select).sort(req.query.sort)
 
-    //send response
     if (payment.length === 0)
         return res.status(StatusCodes.OK).json({
             status: StatusCodes.NOT_FOUND,
@@ -31,13 +30,14 @@ const getPayments = async (req, res) => {
 
 const makePayment = async (req, res) => {
     //filtering incoming data
-    const { amount, userID } = req.body
+    const { amount, amountLKR ,userID } = req.body
 
     //validation
     if (!userID) throw new APIError("userID is required", StatusCodes.BAD_REQUEST)
     const user = await userModel.findById({ _id: userID }).exec();
     if (!user) throw new APIError("user not found", StatusCodes.NOT_FOUND)
     if (!amount) throw new APIError("amount is required", StatusCodes.BAD_REQUEST)
+    if (!amountLKR) throw new APIError("amountLKR is required", StatusCodes.BAD_REQUEST)
 
     //payment
     const paymentStripe = await Stripe(req)
@@ -45,13 +45,13 @@ const makePayment = async (req, res) => {
 
     //create payment
     const newPaymentInfo = await paymentModel.create({
-        amount: amount,
+        amount: amountLKR,
         userID: userID,
     });
 
     //send response
     res.status(StatusCodes.OK).json({
-        status: StatusCodes.OK,
+        status: StatusCodes.CREATED,
         data: newPaymentInfo
     })
 
