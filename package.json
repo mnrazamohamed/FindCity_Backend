@@ -4,7 +4,7 @@
   "description": "FindCity offers an environment to connect hostelers and boarding owners.",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
