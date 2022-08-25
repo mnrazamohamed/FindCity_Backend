@@ -25,7 +25,7 @@ const city = require("./router/city");
 // Middleware
 app.use(
   cors({
-    origin: "https://findcity.netlify.app/",
+    origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   })
 );
