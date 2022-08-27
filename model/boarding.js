@@ -16,7 +16,7 @@ const boardingSchema = mongoose.Schema(
     gender: {
       type: String,
       enum: {
-        values: ["male", "female"],
+        values: ["Male", "Female"],
         message: "Invalid gender, Please select male or female",
       },
       required: [true, "Please provide gender"],
@@ -29,7 +29,7 @@ const boardingSchema = mongoose.Schema(
       type: String,
       required: [true, "Please provide room type"],
       enum: {
-        values: ["single", "share", "single/share"],
+        values: ["Single", "Share", "Single/Share"],
         message: "select room type",
       },
     },
@@ -58,7 +58,7 @@ const boardingSchema = mongoose.Schema(
     facilities: [{
       type: Array,
       enum: {
-        values: ["bed", "mattress", "fan", "table", "chair"],
+        values: ["Bed", "Mattress", "Fan", "Table", "Chair"],
         message: "Please select facilities",
       },
     }],
