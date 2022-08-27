@@ -27,8 +27,8 @@ const postSchema = mongoose.Schema({
   gender: {
     type: String,
     enum: {
-      values: ["male", "female"],
-      message: "Invalid gender role, Please select male or female",
+      values: ["Male", "Female"],
+      message: "Invalid gender role, Please select Male or Female",
     },
     required: [true, "Please provide gender"],
   },
@@ -55,7 +55,7 @@ const postSchema = mongoose.Schema({
     type: String,
     required: [true, "Please provide room type"],
     enum: {
-      values: ["single", "share", "single/share"],
+      values: ["Single", "Share", "Single/Share"],
       message: "Please select room type",
     },
   },
